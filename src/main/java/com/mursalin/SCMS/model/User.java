@@ -20,6 +20,7 @@ public class User {
     private String userName;
     private String password;
     private String userEmail;
+    private boolean isEnable;
     private Role role = Role.USER;
 
     @OneToMany
