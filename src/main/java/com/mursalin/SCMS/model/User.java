@@ -2,9 +2,12 @@ package com.mursalin.SCMS.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -18,4 +21,7 @@ public class User {
     private String password;
     private String userEmail;
     private Role role = Role.USER;
+
+    @OneToMany
+    private List<Complaint> complaints;
 }
