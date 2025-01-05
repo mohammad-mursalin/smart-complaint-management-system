@@ -27,4 +27,10 @@ public class UserController {
         return new ResponseEntity<>("user should not be null", HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping
+    public ResponseEntity<?> verifyToken(@RequestParam String token) {
+
+        return userService.verifyToken(token);
+    }
+
 }
