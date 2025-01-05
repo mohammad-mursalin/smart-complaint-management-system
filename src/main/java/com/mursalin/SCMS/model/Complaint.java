@@ -1,5 +1,6 @@
 package com.mursalin.SCMS.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Complaint {
     @Lob
     private byte[] imageData;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 }
