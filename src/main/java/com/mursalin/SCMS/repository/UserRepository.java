@@ -1,8 +1,12 @@
 package com.mursalin.SCMS.repository;
 
+import com.mursalin.SCMS.dto.UserDTO;
 import com.mursalin.SCMS.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -10,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmailIgnoreCase(String email);
 
     boolean existsByEmailIgnoreCase(String email);
+
+    @Query("SELECT new com.mursalin.SCMS.dto.UserDTO(u.userId, u.email, u.password, u.role) FROM User u WHERE u.email = :email")
+    Optional<UserDTO> findUserDTOByEmail(String email);
 }
