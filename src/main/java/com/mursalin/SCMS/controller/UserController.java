@@ -1,8 +1,10 @@
 package com.mursalin.SCMS.controller;
 
+import com.mursalin.SCMS.dto.LoginRegisterRequest;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,12 @@ public class UserController {
         }
         return new ResponseEntity<>("user should not be null", HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRegisterRequest user) {
+        return userService.login(user);
+    }
+
 
     @GetMapping
     public ResponseEntity<?> verifyToken(@RequestParam String token) {
