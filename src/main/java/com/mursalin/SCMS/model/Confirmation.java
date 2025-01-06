@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Builder
 @Table(name = "confirmations")
 @Data
 public class Confirmation {
@@ -25,6 +25,38 @@ public class Confirmation {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Confirmation() {
+    }
+
+    public Confirmation(long id, String token, User user) {
+        this.id = id;
+        this.token = token;
+        this.user = user;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Confirmation(User user) {
         this.user = user;

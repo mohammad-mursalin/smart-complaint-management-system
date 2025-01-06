@@ -11,10 +11,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    User findByEmailIgnoreCase(String email);
+    User findByUserEmailIgnoreCase(String email);
 
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByUserEmailIgnoreCase(String email);
 
-    @Query("SELECT new com.mursalin.SCMS.dto.UserDTO(u.userId, u.email, u.password, u.role) FROM User u WHERE u.email = :email")
-    Optional<UserDTO> findUserDTOByEmail(String email);
+    @Query("SELECT new com.mursalin.SCMS.dto.UserDTO(u.userId, u.userEmail, u.password, u.role) FROM User u WHERE u.userEmail = :email")
+    Optional<UserDTO> findUserDTOByUserEmail(String email);
 }

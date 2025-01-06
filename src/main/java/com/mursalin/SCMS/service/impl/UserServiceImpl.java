@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<?> register(User user) {
 
-        if(!userRepository.existsByEmailIgnoreCase(user.getUserEmail())) {
+        if(!userRepository.existsByUserEmailIgnoreCase(user.getUserEmail())) {
             user.setEnable(false);
             Confirmation confirmation = new Confirmation(user);
             userRepository.save(user);
@@ -49,9 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> login(LoginRegisterRequest user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword()));
         if(authentication.isAuthenticated()) {
-            String jwtToken = jwtService.generateToken(user.getEmail());
+            String jwtToken = jwtService.generateToken(user.getUserEmail());
             return new ResponseEntity<>(jwtToken, HttpStatus.OK);
         }
         return new ResponseEntity<>("Login failed", HttpStatus.BAD_REQUEST);
