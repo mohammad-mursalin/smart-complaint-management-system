@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class Complaint {
 
     @Id
@@ -43,6 +43,7 @@ public class Complaint {
 
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Complaint() {
