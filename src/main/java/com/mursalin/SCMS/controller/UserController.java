@@ -26,11 +26,6 @@ public class UserController {
         this.complaintService = complaintService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRegisterRequest user) {
-        return userService.login(user);
-    }
-
     @PostMapping("/addComplaint")
     public ResponseEntity<?> addComplaint(@RequestPart Complaint complaint, @RequestPart MultipartFile imageFile, @AuthenticationPrincipal UserDetails userDetails) {
         String userEmail = userDetails.getUsername();
