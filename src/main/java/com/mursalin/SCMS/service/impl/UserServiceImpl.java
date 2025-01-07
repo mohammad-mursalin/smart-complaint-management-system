@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,13 +57,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> login(LoginRegisterRequest user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword()));
-        if(authentication.isAuthenticated()) {
-            String jwtToken = jwtService.generateToken(user.getUserEmail());
-            return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword())
+            );
+
+            User authenticatedUser = userRepository.findByUserEmailIgnoreCase(user.getUserEmail())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            if (authenticatedUser.isEnable()) {
+                if (authentication.isAuthenticated()) {
+                    String jwtToken = jwtService.generateToken(user.getUserEmail());
+                    return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+                }
+                return new ResponseEntity<>("Login failed", HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>("User is not verified. Please verify your email.", HttpStatus.FORBIDDEN);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>("Login failed", HttpStatus.BAD_REQUEST);
     }
+
 
     @Override
     public ResponseEntity<?> verifyToken(String token) {
