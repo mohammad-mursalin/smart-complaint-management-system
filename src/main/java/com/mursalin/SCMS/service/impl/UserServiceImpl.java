@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,6 +23,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     private final ConfirmationRepository confirmationRepository;
     private final MailService mailService;
@@ -38,10 +41,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<?> register(User user) {
-
         if(!userRepository.existsByUserEmailIgnoreCase(user.getUserEmail())) {
             user.setRole(String.valueOf(Role.USER));
             user.setEnable(false);
+            user.setPassword(encoder.encode(user.getPassword()));
             Confirmation confirmation = new Confirmation(user);
             userRepository.save(user);
             confirmationRepository.save(confirmation);
@@ -67,11 +70,14 @@ public class UserServiceImpl implements UserService {
 
         if(confirmation.isPresent()) {
             User user = confirmation.get().getUser();
-            user.setEnable(true);
-            userRepository.save(user);
-            return new ResponseEntity<>("user verified", HttpStatus.OK);
+            if(!user.isEnable()) {
+                user.setEnable(true);
+                userRepository.save(user);
+                confirmationRepository.delete(confirmation.get());
+                return new ResponseEntity<>("user verified", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("user already verified", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("user verification failed", HttpStatus.UNAUTHORIZED);
-
     }
 }
