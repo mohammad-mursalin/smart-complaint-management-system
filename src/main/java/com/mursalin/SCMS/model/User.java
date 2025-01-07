@@ -31,6 +31,7 @@ public class User {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
+    @Column(unique = true)
     private String userEmail;
 
     private boolean isEnable;
