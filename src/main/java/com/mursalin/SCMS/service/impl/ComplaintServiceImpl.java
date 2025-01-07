@@ -45,7 +45,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     private User getUserFromDB(String userEmail) {
-        return userRepository.findByUserEmailIgnoreCase(userEmail);
+        return userRepository.findByUserEmailIgnoreCase(userEmail).get();
     }
 
     private String generateUniqueFilename(String originalFilename) {
