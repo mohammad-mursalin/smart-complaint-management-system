@@ -26,26 +26,9 @@ public class UserController {
         this.complaintService = complaintService;
     }
 
-    @GetMapping("/register")
-    public ResponseEntity<?> userRegistration(@RequestBody User user) {
-
-        if(user != null) {
-
-            return userService.register(user);
-        }
-        return new ResponseEntity<>("user should not be null", HttpStatus.BAD_REQUEST);
-    }
-
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody LoginRegisterRequest user) {
         return userService.login(user);
-    }
-
-
-    @GetMapping
-    public ResponseEntity<?> verifyToken(@RequestParam String token) {
-
-        return userService.verifyToken(token);
     }
 
     @PostMapping("/addComplaint")

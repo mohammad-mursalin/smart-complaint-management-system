@@ -40,9 +40,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(customizer -> customizer.disable())
-                .authorizeHttpRequests(request -> request.requestMatchers("/user/register", "/user/login").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request.requestMatchers("/SCMS/newUser/*", "/SCMS/user/login").permitAll().anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                //.oauth2Login(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
