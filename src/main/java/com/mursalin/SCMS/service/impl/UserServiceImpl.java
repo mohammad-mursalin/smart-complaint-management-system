@@ -3,6 +3,7 @@ package com.mursalin.SCMS.service.impl;
 import com.mursalin.SCMS.dto.LoginRegisterRequest;
 import com.mursalin.SCMS.jwt.JwtService;
 import com.mursalin.SCMS.model.Confirmation;
+import com.mursalin.SCMS.model.Role;
 import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ConfirmationRepository;
 import com.mursalin.SCMS.repository.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<?> register(User user) {
 
         if(!userRepository.existsByUserEmailIgnoreCase(user.getUserEmail())) {
+            user.setRole(String.valueOf(Role.USER));
             user.setEnable(false);
             Confirmation confirmation = new Confirmation(user);
             userRepository.save(user);
@@ -59,10 +63,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<?> verifyToken(String token) {
-        Confirmation confirmation = confirmationRepository.findByToken(token);
-        User user = confirmation.getUser();
-        user.setEnable(true);
-        userRepository.save(user);
-        return new ResponseEntity<>("user verified", HttpStatus.OK);
+        Optional<Confirmation> confirmation = confirmationRepository.findByToken(token);
+
+        if(confirmation.isPresent()) {
+            User user = confirmation.get().getUser();
+            user.setEnable(true);
+            userRepository.save(user);
+            return new ResponseEntity<>("user verified", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("user verification failed", HttpStatus.UNAUTHORIZED);
+
     }
 }
