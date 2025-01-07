@@ -51,6 +51,6 @@ public class MailServiceImpl implements MailService {
     }
 
     private String getVerificationUrl(String host, String token) {
-        return host + "/SCMS/user?token=" + token;
+        return host + "/SCMS/newUser?token=" + token;
     }
 }
