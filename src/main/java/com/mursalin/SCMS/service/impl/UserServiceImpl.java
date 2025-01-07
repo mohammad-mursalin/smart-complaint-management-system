@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
             mailService.sendSimpleMail(user.getUserName(), user.getUserEmail(),confirmation.getToken());
             return new ResponseEntity<>("user registration successful", HttpStatus.OK);
         }
-        throw new RuntimeException("user exist by this email");
+        return new ResponseEntity<>("User already exists with this email", HttpStatus.CONFLICT);
     }
 
     @Override
