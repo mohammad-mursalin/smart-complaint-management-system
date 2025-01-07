@@ -7,11 +7,13 @@ import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.ComplaintService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
+@Service
 public class ComplaintServiceImpl implements ComplaintService {
 
     private final UserRepository userRepository;
