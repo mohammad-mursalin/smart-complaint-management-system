@@ -35,7 +35,7 @@ public class User {
 
     private boolean isEnable;
 
-    private Role role = Role.USER;
+    private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Complaint> complaints = new ArrayList<>();
@@ -43,7 +43,7 @@ public class User {
     public User() {
     }
 
-    public User(long userId, String userName, String password, String userEmail, boolean isEnable, Role role, List<Complaint> complaints) {
+    public User(long userId, String userName, String password, String userEmail, boolean isEnable, String role, List<Complaint> complaints) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
@@ -85,11 +85,11 @@ public class User {
         this.userEmail = userEmail;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
