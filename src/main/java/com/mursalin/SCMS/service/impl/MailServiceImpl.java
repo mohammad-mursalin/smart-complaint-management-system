@@ -54,6 +54,6 @@ public class MailServiceImpl implements MailService {
     }
 
     private String getVerificationUrl(String host, String token) {
-        return host + requestUrl + token;
+        return host + requestUrl + "?token=" + token;
     }
 }
