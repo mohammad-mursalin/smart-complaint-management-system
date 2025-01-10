@@ -23,6 +23,9 @@ public class MailServiceImpl implements MailService {
     @Value("${spring.mail.verify.host}")
     private String host;
 
+    @Value("${spring.mail.verify.token.controller.url}")
+    private String requestUrl;
+
 
     @Override
     @Async
@@ -51,6 +54,6 @@ public class MailServiceImpl implements MailService {
     }
 
     private String getVerificationUrl(String host, String token) {
-        return host + "/SCMS/newUser?token=" + token;
+        return host + requestUrl + token;
     }
 }
