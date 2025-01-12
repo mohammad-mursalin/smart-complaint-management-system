@@ -7,4 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ComplaintService {
     ResponseEntity<?> addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile);
+
+    ResponseEntity<?> deleteComplaint(String userEmail, Long complaintId);
+
+    ResponseEntity<?> updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile);
+
+    ResponseEntity<?> getComplaints(String userEmail);
 }
