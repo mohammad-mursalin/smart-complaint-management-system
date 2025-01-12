@@ -28,4 +28,21 @@ public class ComplaintController {
         return complaintService.addComplaint(userEmail, complaint, imageFile);
     }
 
+    @GetMapping("/myComplaints")
+    public ResponseEntity<?> getComplaints(@AuthenticationPrincipal UserDetails userDetails) {
+        String userEmail = userDetails.getUsername();
+        return complaintService.getComplaints(userEmail);
+    }
+
+    @PutMapping("/updateComplaint")
+    public ResponseEntity<?> updateComplaints(@AuthenticationPrincipal UserDetails userDetails, @RequestPart Complaint complaint, @RequestPart MultipartFile imageFile) {
+        String userEmail = userDetails.getUsername();
+        return complaintService.updateComplaint(userEmail, complaint, imageFile);
+    }
+
+    @DeleteMapping("/deleteComplaint/{complaintId}")
+    public ResponseEntity<?> updateComplaints(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long complaintId) {
+        String userEmail = userDetails.getUsername();
+        return complaintService.deleteComplaint(userEmail, complaintId);
+    }
 }
