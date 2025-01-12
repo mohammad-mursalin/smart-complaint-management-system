@@ -44,6 +44,21 @@ public class ComplaintServiceImpl implements ComplaintService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> deleteComplaint(String userEmail, Long complaintId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> getComplaints(String userEmail) {
+        return null;
+    }
+
     private User getUserFromDB(String userEmail) {
         return userRepository.findByUserEmailIgnoreCase(userEmail).get();
     }
