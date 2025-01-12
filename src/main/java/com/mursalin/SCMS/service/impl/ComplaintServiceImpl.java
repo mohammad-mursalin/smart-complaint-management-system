@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ComplaintServiceImpl implements ComplaintService {
@@ -56,7 +57,14 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     @Override
     public ResponseEntity<?> getComplaints(String userEmail) {
-        return null;
+        long userId = getUserFromDB(userEmail).getUserId();
+        List<Complaint> complaints = complaintRepository.findComplaintsByUserId(userId);
+
+        if (complaints == null || complaints.isEmpty()) {
+            return new ResponseEntity<>("No complaints available now, please add some.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(complaints, HttpStatus.OK);
+        }
     }
 
     private User getUserFromDB(String userEmail) {

@@ -98,8 +98,8 @@ public class User {
         return complaints;
     }
 
-    public void setComplaints(List<Complaint> complaints) {
-        this.complaints = complaints;
+    public void setComplaints(Complaint complaint) {
+        this.complaints.add(complaint);
     }
 
     public boolean isEnable() {
