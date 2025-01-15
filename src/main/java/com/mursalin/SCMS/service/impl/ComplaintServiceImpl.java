@@ -5,6 +5,7 @@ import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.ComplaintService;
+import com.mursalin.SCMS.utils.UserUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,18 +18,18 @@ import java.util.List;
 @Service
 public class ComplaintServiceImpl implements ComplaintService {
 
-    private final UserRepository userRepository;
+    private final UserUtil userUtil;
     private final ComplaintRepository complaintRepository;
 
-    public ComplaintServiceImpl(UserRepository userRepository, ComplaintRepository complaintRepository) {
-        this.userRepository = userRepository;
+    public ComplaintServiceImpl(UserUtil userUtil, ComplaintRepository complaintRepository) {
+        this.userUtil = userUtil;
         this.complaintRepository = complaintRepository;
     }
 
     @Override
     public ResponseEntity<?> addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
         try {
-            User user = getUserFromDB(userEmail);
+            User user = userUtil.getUserFromDB(userEmail);
 
             complaint.setCreatedAt(LocalDate.now());
             complaint.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
@@ -47,8 +48,20 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     @Override
     public ResponseEntity<?> deleteComplaint(String userEmail, Long complaintId) {
-        return null;
+
+        if (complaintRepository.existsById(complaintId)) {
+            Complaint complaint = complaintRepository.findById(complaintId).get();
+
+            if (complaint.getUser().getUserEmail().equals(userEmail)) {
+                complaintRepository.deleteById(complaintId);
+                return new ResponseEntity<>("Complaint deleted successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Unauthorized to delete this complaint", HttpStatus.UNAUTHORIZED);
+            }
+        }
+        return new ResponseEntity<>("Complaint not found", HttpStatus.NOT_FOUND);
     }
+
 
     @Override
     public ResponseEntity<?> updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
@@ -57,7 +70,7 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     @Override
     public ResponseEntity<?> getComplaints(String userEmail) {
-        long userId = getUserFromDB(userEmail).getUserId();
+        long userId = userUtil.getUserFromDB(userEmail).getUserId();
         List<Complaint> complaints = complaintRepository.findComplaintsByUserId(userId);
 
         if (complaints == null || complaints.isEmpty()) {
@@ -65,10 +78,6 @@ public class ComplaintServiceImpl implements ComplaintService {
         } else {
             return new ResponseEntity<>(complaints, HttpStatus.OK);
         }
-    }
-
-    private User getUserFromDB(String userEmail) {
-        return userRepository.findByUserEmailIgnoreCase(userEmail).get();
     }
 
     private String generateUniqueFilename(String originalFilename) {
