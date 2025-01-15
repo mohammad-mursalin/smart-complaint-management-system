@@ -3,7 +3,6 @@ package com.mursalin.SCMS.service.impl;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ComplaintRepository;
-import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.ComplaintService;
 import com.mursalin.SCMS.utils.UserUtil;
 import org.springframework.http.HttpStatus;
