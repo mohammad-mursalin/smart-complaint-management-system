@@ -77,18 +77,21 @@ public class ComplaintServiceImpl implements ComplaintService {
                 Complaint complaintDB = complaintRepository.findById(complaint.getComplaintId()).get();
 
                 if (complaintDB.getUser().getUserEmail().equals(userEmail)) {
-                    complaintDB.setUpdatedAt(LocalDate.now());
-                    complaintDB.setCategory(complaint.getCategory());
-                    complaintDB.setDescription(complaint.getDescription());
-                    complaintDB.setTitle(complaint.getTitle());
-                    complaintDB.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
-                    complaintDB.setImageType(imageFile.getContentType());
-                    complaintDB.setImageData(imageFile.getBytes());
-                    complaintRepository.save(complaintDB);
-                    return new ResponseEntity<>("Complaint updated successfully", HttpStatus.OK);
-                } else {
-                    return new ResponseEntity<>("Unauthorized to update this complaint", HttpStatus.UNAUTHORIZED);
+
+                    if(complaint.getStatus().equals(String.valueOf(Status.PENDING))) {
+                        complaintDB.setUpdatedAt(LocalDate.now());
+                        complaintDB.setCategory(complaint.getCategory());
+                        complaintDB.setDescription(complaint.getDescription());
+                        complaintDB.setTitle(complaint.getTitle());
+                        complaintDB.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
+                        complaintDB.setImageType(imageFile.getContentType());
+                        complaintDB.setImageData(imageFile.getBytes());
+                        complaintRepository.save(complaintDB);
+                        return new ResponseEntity<>("Complaint updated successfully", HttpStatus.OK);
+                    }
+                    return new ResponseEntity<>("Can not update due to IN_PROGRESS or RESOLVED state of the complaint", HttpStatus.FORBIDDEN);
                 }
+                return new ResponseEntity<>("Unauthorized to update this complaint", HttpStatus.UNAUTHORIZED);
             }
             return new ResponseEntity<>("Complaint not found", HttpStatus.NOT_FOUND);
         } catch (IOException e) {
