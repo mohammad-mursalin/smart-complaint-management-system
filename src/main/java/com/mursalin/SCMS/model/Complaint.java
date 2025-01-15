@@ -18,7 +18,7 @@ public class Complaint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long complaintId;
+    private Long complaintId;
 
     @NotBlank(message = "Title is required")
     @Size(min = 5, max = 100, message = "Title must be between 5 and 100 characters")
