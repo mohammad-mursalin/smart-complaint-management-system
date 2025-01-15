@@ -9,24 +9,22 @@ import lombok.NoArgsConstructor;
 //@NoArgsConstructor
 //@AllArgsConstructor
 public class UserDTO {
-    private long userId;
+    private Long userId;
     private String userName;
     private String userEmail;
     private String password;
     private String role;
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public UserDTO() {
     }
 
-    public UserDTO(long userId, String userEmail, String password, String userName, String role) {
+    public UserDTO(Long userId, String userName, String userEmail) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+    }
+
+    public UserDTO(Long userId, String userEmail, String password, String userName, String role) {
         this.userId = userId;
         this.userEmail = userEmail;
         this.password = password;
@@ -34,11 +32,11 @@ public class UserDTO {
         this.role = role;
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -64,5 +62,13 @@ public class UserDTO {
 
     public void setUserName(String role) {
         this.userName = userName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
