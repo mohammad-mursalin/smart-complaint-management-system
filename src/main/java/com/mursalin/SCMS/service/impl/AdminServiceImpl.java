@@ -1,11 +1,26 @@
 package com.mursalin.SCMS.service.impl;
 
+import com.mursalin.SCMS.dto.UserDTO;
+import com.mursalin.SCMS.repository.ComplaintRepository;
+import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.AdminService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AdminServiceImpl implements AdminService {
+
+    private final UserRepository userRepository;
+    private final ComplaintRepository complaintRepository;
+
+    public AdminServiceImpl(UserRepository userRepository, ComplaintRepository complaintRepository) {
+        this.userRepository = userRepository;
+        this.complaintRepository = complaintRepository;
+    }
+
     @Override
     public ResponseEntity<?> getComplaints() {
         return null;
@@ -18,6 +33,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<?> getUsers() {
-        return null;
+        List<UserDTO> users = userRepository.findAllUsers();
+
+        if(!users.isEmpty()) {
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("There are no users right now", HttpStatus.OK);
     }
 }
