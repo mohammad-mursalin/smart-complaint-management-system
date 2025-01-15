@@ -1,6 +1,7 @@
 package com.mursalin.SCMS.service.impl;
 
 import com.mursalin.SCMS.model.Complaint;
+import com.mursalin.SCMS.model.Status;
 import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.service.ComplaintService;
@@ -49,14 +50,20 @@ public class ComplaintServiceImpl implements ComplaintService {
     public ResponseEntity<?> deleteComplaint(String userEmail, Long complaintId) {
 
         if (complaintRepository.existsById(complaintId)) {
+
             Complaint complaint = complaintRepository.findById(complaintId).get();
 
             if (complaint.getUser().getUserEmail().equals(userEmail)) {
-                complaintRepository.deleteById(complaintId);
-                return new ResponseEntity<>("Complaint deleted successfully", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Unauthorized to delete this complaint", HttpStatus.UNAUTHORIZED);
+
+                if( complaint.getStatus().equals(String.valueOf(Status.PENDING))) {
+
+                    complaintRepository.deleteById(complaintId);
+
+                    return new ResponseEntity<>("Complaint deleted successfully", HttpStatus.OK);
+                }
+                return new ResponseEntity<>("Can not delete due to IN_PROGRESS or RESOLVED state of the complaint", HttpStatus.FORBIDDEN);
             }
+            return new ResponseEntity<>("Unauthorized to delete this complaint", HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>("Complaint not found", HttpStatus.NOT_FOUND);
     }
