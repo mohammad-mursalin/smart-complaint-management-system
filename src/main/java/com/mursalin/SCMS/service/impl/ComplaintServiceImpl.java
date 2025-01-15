@@ -32,6 +32,7 @@ public class ComplaintServiceImpl implements ComplaintService {
             User user = userUtil.getUserFromDB(userEmail);
 
             complaint.setCreatedAt(LocalDate.now());
+            complaint.setStatus(String.valueOf(Status.PENDING));
             complaint.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
             complaint.setImageType(imageFile.getContentType());
             complaint.setImageData(imageFile.getBytes());
