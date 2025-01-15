@@ -65,7 +65,28 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     @Override
     public ResponseEntity<?> updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
-        return null;
+        try {
+            if (complaintRepository.existsById(complaint.getComplaintId())) {
+                Complaint complaintDB = complaintRepository.findById(complaint.getComplaintId()).get();
+
+                if (complaintDB.getUser().getUserEmail().equals(userEmail)) {
+                    complaintDB.setUpdatedAt(LocalDate.now());
+                    complaintDB.setCategory(complaint.getCategory());
+                    complaintDB.setDescription(complaint.getDescription());
+                    complaintDB.setTitle(complaint.getTitle());
+                    complaintDB.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
+                    complaintDB.setImageType(imageFile.getContentType());
+                    complaintDB.setImageData(imageFile.getBytes());
+                    complaintRepository.save(complaintDB);
+                    return new ResponseEntity<>("Complaint updated successfully", HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>("Unauthorized to update this complaint", HttpStatus.UNAUTHORIZED);
+                }
+            }
+            return new ResponseEntity<>("Complaint not found", HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
