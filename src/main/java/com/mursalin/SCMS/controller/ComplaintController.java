@@ -13,12 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/SCMS/user")
 public class ComplaintController {
 
-    private final UserService userService;
-
     private final ComplaintService complaintService;
 
-    public ComplaintController(UserService userService, ComplaintService complaintService) {
-        this.userService = userService;
+    public ComplaintController(ComplaintService complaintService) {
         this.complaintService = complaintService;
     }
 
