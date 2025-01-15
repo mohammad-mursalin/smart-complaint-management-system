@@ -1,6 +1,8 @@
 package com.mursalin.SCMS.service.impl;
 
+import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.dto.UserDTO;
+import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.AdminService;
@@ -23,7 +25,11 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<?> getComplaints() {
-        return null;
+
+        List<ComplaintDTO> complaints = complaintRepository.findAllComplaintsWithUser();
+        if(!complaints.isEmpty())
+            return new ResponseEntity<>(complaints, HttpStatus.OK);
+        return new ResponseEntity<>("There are no complaints right now", HttpStatus.OK);
     }
 
     @Override
