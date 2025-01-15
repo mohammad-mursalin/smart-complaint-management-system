@@ -49,7 +49,7 @@ public class Complaint {
     public Complaint() {
     }
 
-    public Complaint(long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageName, String imageType, byte[] imageData, User user) {
+    public Complaint(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageName, String imageType, byte[] imageData, User user) {
         this.complaintId = complaintId;
         this.title = title;
         this.description = description;
@@ -63,11 +63,11 @@ public class Complaint {
         this.user = user;
     }
 
-    public long getComplaintId() {
+    public Long getComplaintId() {
         return complaintId;
     }
 
-    public void setComplaintId(long complaintId) {
+    public void setComplaintId(Long complaintId) {
         this.complaintId = complaintId;
     }
 
