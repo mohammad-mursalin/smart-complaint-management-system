@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 public interface AdminService {
     ResponseEntity<?> getComplaints();
 
-    ResponseEntity<?> updateStatus(String status);
+    ResponseEntity<?> updateStatus(Long complaintId, String status);
 
     ResponseEntity<?> getUsers();
 }

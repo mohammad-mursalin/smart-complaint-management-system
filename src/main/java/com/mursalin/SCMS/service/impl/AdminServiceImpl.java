@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -33,8 +34,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResponseEntity<?> updateStatus(String status) {
-        return null;
+    public ResponseEntity<?> updateStatus(Long complaintId, String status) {
+
+        Optional<Complaint> optionalComplaint = complaintRepository.findById(complaintId);
+        if(optionalComplaint.isPresent()) {
+            optionalComplaint.get().setStatus(status);
+            complaintRepository.save(optionalComplaint.get());
+            return new ResponseEntity<>("complaint status updated to " +status, HttpStatus.OK);
+        }
+        return new ResponseEntity<>("complaint not found", HttpStatus.NOT_FOUND);
     }
 
     @Override
