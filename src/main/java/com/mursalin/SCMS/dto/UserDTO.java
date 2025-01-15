@@ -13,15 +13,25 @@ public class UserDTO {
     private String userName;
     private String userEmail;
     private String password;
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public UserDTO() {
     }
 
-    public UserDTO(long userId, String userEmail, String password, String userName) {
+    public UserDTO(long userId, String userEmail, String password, String userName, String role) {
         this.userId = userId;
         this.userEmail = userEmail;
         this.password = password;
         this.userName = userName;
+        this.role = role;
     }
 
     public long getUserId() {
