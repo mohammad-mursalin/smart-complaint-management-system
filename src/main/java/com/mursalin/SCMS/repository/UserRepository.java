@@ -15,6 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUserEmailIgnoreCase(String email);
 
-    @Query("SELECT new com.mursalin.SCMS.dto.UserDTO(u.userId, u.userEmail, u.password, u.role) FROM User u WHERE u.userEmail = :email")
+    @Query("SELECT new com.mursalin.SCMS.dto.UserDTO(u.userId, u.userName, u.userEmail, u.password, u.role) FROM User u WHERE u.userEmail = :email")
     Optional<UserDTO> findUserDTOByUserEmail(String email);
 }
