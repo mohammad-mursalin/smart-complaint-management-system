@@ -4,19 +4,19 @@ import com.mursalin.SCMS.service.AdminService;
 import com.mursalin.SCMS.service.ComplaintService;
 import com.mursalin.SCMS.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/SCMS/admin/complaints")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final UserService userService;
     private final AdminService adminService;
 
-    public AdminController(UserService userService, AdminService adminService) {
-        this.userService = userService;
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
 
