@@ -9,6 +9,8 @@ import com.mursalin.SCMS.repository.ConfirmationRepository;
 import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.MailService;
 import com.mursalin.SCMS.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +28,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final ConfirmationRepository confirmationRepository;
     private final MailService mailService;
@@ -60,9 +64,9 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<String> login(LoginRegisterRequest user) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword()));
 
+            logger.info("inside login of userServiceImpl");
             User authenticatedUser = userRepository.findByUserEmailIgnoreCase(user.getUserEmail())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -76,7 +80,8 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>("User is not verified. Please verify your email.", HttpStatus.FORBIDDEN);
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
+            logger.info(encoder.encode(user.getPassword()));
+            return new ResponseEntity<>("Invalid credentials " +e.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
 
