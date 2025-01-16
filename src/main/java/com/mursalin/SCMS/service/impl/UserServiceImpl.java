@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -81,6 +82,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public ResponseEntity<?> verifyToken(String token) {
         Optional<Confirmation> confirmation = confirmationRepository.findByToken(token);
 
@@ -90,7 +92,8 @@ public class UserServiceImpl implements UserService {
                 user.setEnable(true);
                 userRepository.save(user);
                 confirmationRepository.delete(confirmation.get());
-                return new ResponseEntity<>("user verified", HttpStatus.OK);
+                String jwt = jwtService.generateToken(user.getUserEmail());
+                return new ResponseEntity<>(jwt, HttpStatus.OK);
             }
             return new ResponseEntity<>("user already verified", HttpStatus.BAD_REQUEST);
         }
