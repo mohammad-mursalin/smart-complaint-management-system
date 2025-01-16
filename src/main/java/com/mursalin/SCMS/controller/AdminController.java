@@ -30,7 +30,7 @@ public class AdminController {
         return adminService.updateStatus(complaintId, status);
     }
 
-    @GetMapping()
+    @GetMapping("/allUsers")
     public ResponseEntity<?> getUsers() {
         return adminService.getUsers();
     }
