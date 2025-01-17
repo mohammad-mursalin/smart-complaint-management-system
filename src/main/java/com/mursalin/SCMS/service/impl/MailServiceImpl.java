@@ -1,5 +1,6 @@
 package com.mursalin.SCMS.service.impl;
 
+import com.mursalin.SCMS.exceptionHandler.EmailSendingException;
 import com.mursalin.SCMS.service.MailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -30,9 +31,7 @@ public class MailServiceImpl implements MailService {
     @Override
     @Async
     public void sendSimpleMail(String name, String emailTo, String token) {
-
         try {
-
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(emailFrom);
             mailMessage.setTo(emailTo);
@@ -40,12 +39,9 @@ public class MailServiceImpl implements MailService {
             mailMessage.setText(simpleMailText(name, host, token));
 
             mailSender.send(mailMessage);
-
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            throw new EmailSendingException("Failed to send email to " + emailTo);
         }
-
     }
 
     private String simpleMailText(String name, String host, String token) {
