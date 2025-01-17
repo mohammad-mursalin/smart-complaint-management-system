@@ -42,6 +42,19 @@ public class ComplaintDTO {
         this.user = user;
     }
 
+    public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageName, String imageType, byte[] imageData) {
+        this.complaintId = complaintId;
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.imageName = imageName;
+        this.imageType = imageType;
+        this.imageData = imageData;
+    }
+
     public Long getComplaintId() {
         return complaintId;
     }
