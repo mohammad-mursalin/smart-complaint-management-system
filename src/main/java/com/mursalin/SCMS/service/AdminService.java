@@ -1,11 +1,16 @@
 package com.mursalin.SCMS.service;
 
+import com.mursalin.SCMS.dto.ComplaintDTO;
+import com.mursalin.SCMS.dto.UserDTO;
+import com.mursalin.SCMS.model.Complaint;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface AdminService {
-    ResponseEntity<?> getComplaints();
+    List<ComplaintDTO> getComplaints();
 
-    ResponseEntity<?> updateStatus(Long complaintId, String status);
+    Complaint updateStatus(Long complaintId, String status);
 
-    ResponseEntity<?> getUsers();
+    List<UserDTO> getUsers();
 }
