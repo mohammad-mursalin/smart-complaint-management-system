@@ -12,8 +12,10 @@ import java.util.List;
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
     @Query("SELECT new com.mursalin.SCMS.dto.ComplaintDTO(c.complaintId, c.title, c.description, c.category, c.status, " +
-            "c.createdAt, c.updatedAt, c.imageName, c.imageType, c.imageData FROM Complaint c WHERE c.user.userId = :userId")
-    List<ComplaintDTO> findComplaintsByUserId(long userId);
+            "c.createdAt, c.updatedAt, c.imageName, c.imageType, c.imageData) " +
+            "FROM Complaint c WHERE c.user.userId = :userId")
+    List<ComplaintDTO> findComplaintsByUserId(Long userId);
+
 
     @Query("SELECT new com.mursalin.SCMS.dto.ComplaintDTO(c.complaintId, c.title, c.description, c.category, c.status, " +
             "c.createdAt, c.updatedAt, c.imageName, c.imageType, c.imageData, " +
