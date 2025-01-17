@@ -1,5 +1,9 @@
 package com.mursalin.SCMS.service.impl;
 
+import com.mursalin.SCMS.dto.ComplaintDTO;
+import com.mursalin.SCMS.exceptionHandler.ComplaintNotFoundException;
+import com.mursalin.SCMS.exceptionHandler.InvalidComplaintStateException;
+import com.mursalin.SCMS.exceptionHandler.UnauthorizedActionException;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.model.Status;
 import com.mursalin.SCMS.model.User;
@@ -27,10 +31,9 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public ResponseEntity<?> addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
+    public void addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
         try {
             User user = userUtil.getUserFromDB(userEmail);
-
             complaint.setCreatedAt(LocalDate.now());
             complaint.setStatus(String.valueOf(Status.PENDING));
             complaint.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
@@ -39,16 +42,13 @@ public class ComplaintServiceImpl implements ComplaintService {
             complaint.setUser(user);
 
             complaintRepository.save(complaint);
-
-            return new ResponseEntity<>("new complaint added successfully", HttpStatus.CREATED);
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
+            throw new RuntimeException("Error while processing the complaint image");
         }
     }
 
     @Override
-    public ResponseEntity<?> deleteComplaint(String userEmail, Long complaintId) {
+    public void deleteComplaint(String userEmail, Long complaintId) {
 
         if (complaintRepository.existsById(complaintId)) {
 
@@ -59,56 +59,46 @@ public class ComplaintServiceImpl implements ComplaintService {
                 if( complaint.getStatus().equals(String.valueOf(Status.PENDING))) {
 
                     complaintRepository.deleteById(complaintId);
-
-                    return new ResponseEntity<>("Complaint deleted successfully", HttpStatus.OK);
                 }
-                return new ResponseEntity<>("Can not delete due to IN_PROGRESS or RESOLVED state of the complaint", HttpStatus.FORBIDDEN);
+                throw new InvalidComplaintStateException("Can not delete complaint due to in progress or resolved state");
             }
-            return new ResponseEntity<>("Unauthorized to delete this complaint", HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedActionException("You are not authorized to delete this complaint");
         }
-        return new ResponseEntity<>("Complaint not found", HttpStatus.NOT_FOUND);
+        throw new ComplaintNotFoundException("Complaint with id " + complaintId + " not found");
     }
 
 
     @Override
-    public ResponseEntity<?> updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
+    public void updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
+        Complaint complaintDB = complaintRepository.findById(complaint.getComplaintId())
+                .orElseThrow(() -> new ComplaintNotFoundException("Complaint not found"));
+
+        if (!complaintDB.getUser().getUserEmail().equals(userEmail)) {
+            throw new UnauthorizedActionException("Unauthorized to update this complaint");
+        }
+
+        if (!complaintDB.getStatus().equals(String.valueOf(Status.PENDING))) {
+            throw new InvalidComplaintStateException("Cannot update due to IN_PROGRESS or RESOLVED state of the complaint");
+        }
+
         try {
-            if (complaintRepository.existsById(complaint.getComplaintId())) {
-                Complaint complaintDB = complaintRepository.findById(complaint.getComplaintId()).get();
-
-                if (complaintDB.getUser().getUserEmail().equals(userEmail)) {
-
-                    if(complaint.getStatus().equals(String.valueOf(Status.PENDING))) {
-                        complaintDB.setUpdatedAt(LocalDate.now());
-                        complaintDB.setCategory(complaint.getCategory());
-                        complaintDB.setDescription(complaint.getDescription());
-                        complaintDB.setTitle(complaint.getTitle());
-                        complaintDB.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
-                        complaintDB.setImageType(imageFile.getContentType());
-                        complaintDB.setImageData(imageFile.getBytes());
-                        complaintRepository.save(complaintDB);
-                        return new ResponseEntity<>("Complaint updated successfully", HttpStatus.OK);
-                    }
-                    return new ResponseEntity<>("Can not update due to IN_PROGRESS or RESOLVED state of the complaint", HttpStatus.FORBIDDEN);
-                }
-                return new ResponseEntity<>("Unauthorized to update this complaint", HttpStatus.UNAUTHORIZED);
-            }
-            return new ResponseEntity<>("Complaint not found", HttpStatus.NOT_FOUND);
+            complaintDB.setUpdatedAt(LocalDate.now());
+            complaintDB.setCategory(complaint.getCategory());
+            complaintDB.setDescription(complaint.getDescription());
+            complaintDB.setTitle(complaint.getTitle());
+            complaintDB.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
+            complaintDB.setImageType(imageFile.getContentType());
+            complaintDB.setImageData(imageFile.getBytes());
+            complaintRepository.save(complaintDB);
         } catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RuntimeException("Error while updating the complaint image");
         }
     }
 
     @Override
-    public ResponseEntity<?> getComplaints(String userEmail) {
-        long userId = userUtil.getUserFromDB(userEmail).getUserId();
-        List<Complaint> complaints = complaintRepository.findComplaintsByUserId(userId);
-
-        if (complaints == null || complaints.isEmpty()) {
-            return new ResponseEntity<>("No complaints available now, please add some.", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(complaints, HttpStatus.OK);
-        }
+    public List<ComplaintDTO> getComplaints(String userEmail) {
+        Long userId = userUtil.getUserFromDB(userEmail).getUserId();
+        return complaintRepository.findComplaintsByUserId(userId);
     }
 
     private String generateUniqueFilename(String originalFilename) {

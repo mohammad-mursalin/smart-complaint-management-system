@@ -1,13 +1,17 @@
 package com.mursalin.SCMS.controller;
 
+import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.service.ComplaintService;
 import com.mursalin.SCMS.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/SCMS/user")
@@ -22,24 +26,28 @@ public class ComplaintController {
     @PostMapping("/addComplaint")
     public ResponseEntity<?> addComplaint(@RequestPart Complaint complaint, @RequestPart MultipartFile imageFile, @AuthenticationPrincipal UserDetails userDetails) {
         String userEmail = userDetails.getUsername();
-        return complaintService.addComplaint(userEmail, complaint, imageFile);
+        complaintService.addComplaint(userEmail, complaint, imageFile);
+        return new ResponseEntity<>("New complaint added successfully", HttpStatus.CREATED);
     }
 
     @GetMapping("/myComplaints")
     public ResponseEntity<?> getComplaints(@AuthenticationPrincipal UserDetails userDetails) {
         String userEmail = userDetails.getUsername();
-        return complaintService.getComplaints(userEmail);
+        List<ComplaintDTO> complaints = complaintService.getComplaints(userEmail);
+        return new ResponseEntity<>(complaints, HttpStatus.OK);
     }
 
     @PutMapping("/updateComplaint")
     public ResponseEntity<?> updateComplaints(@AuthenticationPrincipal UserDetails userDetails, @RequestPart Complaint complaint, @RequestPart MultipartFile imageFile) {
         String userEmail = userDetails.getUsername();
-        return complaintService.updateComplaint(userEmail, complaint, imageFile);
+        complaintService.updateComplaint(userEmail, complaint, imageFile);
+        return new ResponseEntity<>("Complaint updated successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteComplaint/{complaintId}")
-    public ResponseEntity<?> updateComplaints(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long complaintId) {
+    public ResponseEntity<?> DeleteComplaints(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long complaintId) {
         String userEmail = userDetails.getUsername();
-        return complaintService.deleteComplaint(userEmail, complaintId);
+        complaintService.deleteComplaint(userEmail, complaintId);
+        return new ResponseEntity<>("Complaint deleted successfully", HttpStatus.OK);
     }
 }

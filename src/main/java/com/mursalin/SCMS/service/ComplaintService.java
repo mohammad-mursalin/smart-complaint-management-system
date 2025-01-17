@@ -1,16 +1,19 @@
 package com.mursalin.SCMS.service;
 
+import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface ComplaintService {
-    ResponseEntity<?> addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile);
+    void addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile);
 
-    ResponseEntity<?> deleteComplaint(String userEmail, Long complaintId);
+    void deleteComplaint(String userEmail, Long complaintId);
 
-    ResponseEntity<?> updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile);
+    void updateComplaint(String userEmail, Complaint complaint, MultipartFile imageFile);
 
-    ResponseEntity<?> getComplaints(String userEmail);
+    List<ComplaintDTO> getComplaints(String userEmail);
 }
