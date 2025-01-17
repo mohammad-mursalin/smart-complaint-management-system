@@ -1,6 +1,10 @@
 package com.mursalin.SCMS.service.impl;
 
 import com.mursalin.SCMS.dto.LoginRegisterRequest;
+import com.mursalin.SCMS.exceptionHandler.AuthenticationFailedException;
+import com.mursalin.SCMS.exceptionHandler.UserAlreadyExistsException;
+import com.mursalin.SCMS.exceptionHandler.UserNotFoundException;
+import com.mursalin.SCMS.exceptionHandler.UserNotVerifiedException;
 import com.mursalin.SCMS.jwt.JwtService;
 import com.mursalin.SCMS.model.Confirmation;
 import com.mursalin.SCMS.model.Role;
@@ -16,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> register(User user) {
+    public User register(User user) {
         if(!userRepository.existsByUserEmailIgnoreCase(user.getUserEmail())) {
             user.setRole(String.valueOf(Role.USER));
             user.setEnable(false);
@@ -55,13 +60,13 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             confirmationRepository.save(confirmation);
             mailService.sendSimpleMail(user.getUserName(), user.getUserEmail(),confirmation.getToken());
-            return new ResponseEntity<>("user registration successful", HttpStatus.OK);
+            return user;
         }
-        return new ResponseEntity<>("User already exists with this email", HttpStatus.CONFLICT);
+        throw new UserAlreadyExistsException("User already exists with this email : " + user.getUserEmail());
     }
 
     @Override
-    public ResponseEntity<String> login(LoginRegisterRequest user) {
+    public String login(LoginRegisterRequest user) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword()));
@@ -72,23 +77,21 @@ public class UserServiceImpl implements UserService {
 
             if (authenticatedUser.isEnable()) {
                 if (authentication.isAuthenticated()) {
-                    String jwtToken = jwtService.generateToken(user.getUserEmail());
-                    return new ResponseEntity<>(jwtToken, HttpStatus.OK);
+                    return jwtService.generateToken(user.getUserEmail());
                 }
-                return new ResponseEntity<>("Login failed", HttpStatus.BAD_REQUEST);
+                throw new AuthenticationFailedException("Login failed due to invalid credentials.");
             }
-            return new ResponseEntity<>("User is not verified. Please verify your email.", HttpStatus.FORBIDDEN);
+            throw new UserNotVerifiedException("User is not verified. Please verify your email.");
 
-        } catch (Exception e) {
-            logger.info(encoder.encode(user.getPassword()));
-            return new ResponseEntity<>("Invalid credentials " +e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (AuthenticationException ex) {
+            throw new AuthenticationFailedException("Invalid email or password.");
         }
     }
 
 
     @Override
     @Transactional
-    public ResponseEntity<?> verifyToken(String token) {
+    public String verifyToken(String token) {
         Optional<Confirmation> confirmation = confirmationRepository.findByToken(token);
 
         if(confirmation.isPresent()) {
@@ -97,11 +100,10 @@ public class UserServiceImpl implements UserService {
                 user.setEnable(true);
                 userRepository.save(user);
                 confirmationRepository.delete(confirmation.get());
-                String jwt = jwtService.generateToken(user.getUserEmail());
-                return new ResponseEntity<>(jwt, HttpStatus.OK);
+                return jwtService.generateToken(user.getUserEmail());
             }
-            return new ResponseEntity<>("user already verified", HttpStatus.BAD_REQUEST);
+            throw new UserAlreadyExistsException("User is already verified.");
         }
-        return new ResponseEntity<>("user verification failed", HttpStatus.UNAUTHORIZED);
+        throw new UserNotFoundException("Verification token is invalid or expired.");
     }
 }

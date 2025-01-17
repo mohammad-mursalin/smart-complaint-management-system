@@ -26,23 +26,20 @@ public class UserController {
     public ResponseEntity<?> userRegistration(@RequestBody User user) {
 
         if(user != null) {
-
-            return userService.register(user);
+            User registeredUser =  userService.register(user);
+            return new ResponseEntity<>("Registration successful for " + registeredUser.getUserName(), HttpStatus.OK);
         }
         return new ResponseEntity<>("user should not be null", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/verifyToken")
     public ResponseEntity<?> verifyToken(@RequestParam String token) {
-
-        return userService.verifyToken(token);
+        return new ResponseEntity<>(userService.verifyToken(token),HttpStatus.OK);
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Valid @RequestBody LoginRegisterRequest user) {
         logger.info(user.getUserEmail());
-        logger.info(user.getPassword());
-
-        return userService.login(user);
+        return new ResponseEntity<>(userService.login(user), HttpStatus.OK);
     }
 }

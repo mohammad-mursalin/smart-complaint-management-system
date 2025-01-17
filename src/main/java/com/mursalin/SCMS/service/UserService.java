@@ -6,9 +6,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-    ResponseEntity<?> register(User user);
+    User register(User user);
 
-    ResponseEntity<?> verifyToken(String token);
+    String verifyToken(String token);
 
-    ResponseEntity<String> login(@Valid LoginRegisterRequest user);
+    String login(@Valid LoginRegisterRequest user);
 }
