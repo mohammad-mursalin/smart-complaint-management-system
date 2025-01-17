@@ -1,10 +1,7 @@
 package com.mursalin.SCMS.service.impl;
 
 import com.mursalin.SCMS.dto.LoginRegisterRequest;
-import com.mursalin.SCMS.exceptionHandler.AuthenticationFailedException;
-import com.mursalin.SCMS.exceptionHandler.UserAlreadyExistsException;
-import com.mursalin.SCMS.exceptionHandler.UserNotFoundException;
-import com.mursalin.SCMS.exceptionHandler.UserNotVerifiedException;
+import com.mursalin.SCMS.exceptionHandler.*;
 import com.mursalin.SCMS.jwt.JwtService;
 import com.mursalin.SCMS.model.Confirmation;
 import com.mursalin.SCMS.model.Role;
@@ -62,7 +59,7 @@ public class UserServiceImpl implements UserService {
             mailService.sendSimpleMail(user.getUserName(), user.getUserEmail(),confirmation.getToken());
             return user;
         }
-        throw new UserAlreadyExistsException("User already exists with this email : " + user.getUserEmail());
+        throw new CustomException("User already exists with this email : " + user.getUserEmail(),HttpStatus.CONFLICT);
     }
 
     @Override

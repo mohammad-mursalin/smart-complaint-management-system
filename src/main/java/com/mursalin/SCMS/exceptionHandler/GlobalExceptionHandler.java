@@ -67,6 +67,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED.value()), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleCustomException(CustomException ex) {
+        logger.error("Error: {}", ex.getMessage());
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), ex.getHttpStatus().value()), ex.getHttpStatus());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex) {
         logger.error("Unhandled error: {}", ex.getMessage());
