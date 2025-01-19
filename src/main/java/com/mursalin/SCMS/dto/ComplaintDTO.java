@@ -2,13 +2,11 @@ package com.mursalin.SCMS.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ComplaintDTO {
@@ -34,7 +32,7 @@ public class ComplaintDTO {
 
     private UserDTO user;
 
-    public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageName, String imageType, byte[] imageData) {
+        public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageName, String imageType, byte[] imageData) {
         this.complaintId = complaintId;
         this.title = title;
         this.description = description;

@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class ErrorResponse {
 
     private LocalDateTime timestamp;

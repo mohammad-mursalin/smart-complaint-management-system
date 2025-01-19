@@ -13,7 +13,6 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Complaint {

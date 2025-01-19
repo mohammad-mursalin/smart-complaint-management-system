@@ -6,14 +6,10 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Builder
 @Table(name = "confirmations")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Confirmation {
 
     @Id
