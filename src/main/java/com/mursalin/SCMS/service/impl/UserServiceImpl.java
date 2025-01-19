@@ -10,14 +10,16 @@ import com.mursalin.SCMS.repository.ConfirmationRepository;
 import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.MailService;
 import com.mursalin.SCMS.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,18 +28,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-
-    Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
+    
     private final ConfirmationRepository confirmationRepository;
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private UserDetailsService userDetailsService;
 
     public UserServiceImpl(UserRepository userRepository, ConfirmationRepository confirmationRepository, MailService mailService, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.userRepository = userRepository;
@@ -45,6 +47,11 @@ public class UserServiceImpl implements UserService {
         this.mailService = mailService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+    }
+
+    @Autowired
+    public void setUserDetailsService(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -68,7 +75,7 @@ public class UserServiceImpl implements UserService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUserEmail(), user.getPassword()));
 
-            logger.info("inside login of userServiceImpl");
+            log.info("inside login of userServiceImpl");
             User authenticatedUser = userRepository.findByUserEmailIgnoreCase(user.getUserEmail())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -97,6 +104,9 @@ public class UserServiceImpl implements UserService {
                 user.setEnable(true);
                 userRepository.save(user);
                 confirmationRepository.delete(confirmation.get());
+                UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserEmail());
+                UsernamePasswordAuthenticationToken upaToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(upaToken);
                 return jwtService.generateToken(user.getUserEmail());
             }
             throw new UserAlreadyExistsException("User is already verified.");

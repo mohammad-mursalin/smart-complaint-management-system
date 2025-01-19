@@ -26,8 +26,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<ComplaintDTO> getComplaints() {
 
-        List<ComplaintDTO> complaints = complaintRepository.findAllComplaintsWithUser();
-        return complaints;
+        return complaintRepository.findAllComplaintsWithUser();
     }
 
     @Override

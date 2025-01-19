@@ -4,6 +4,9 @@ import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.service.ComplaintService;
 import com.mursalin.SCMS.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/SCMS/user")
+@Slf4j
 public class ComplaintController {
 
     private final ComplaintService complaintService;
@@ -32,7 +36,9 @@ public class ComplaintController {
 
     @GetMapping("/myComplaints")
     public ResponseEntity<?> getComplaints(@AuthenticationPrincipal UserDetails userDetails) {
+        log.info(userDetails.getUsername());
         String userEmail = userDetails.getUsername();
+        log.info(userEmail);
         List<ComplaintDTO> complaints = complaintService.getComplaints(userEmail);
         return new ResponseEntity<>(complaints, HttpStatus.OK);
     }

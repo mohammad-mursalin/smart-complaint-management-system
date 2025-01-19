@@ -10,8 +10,6 @@ import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.service.ComplaintService;
 import com.mursalin.SCMS.utils.UserUtil;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
