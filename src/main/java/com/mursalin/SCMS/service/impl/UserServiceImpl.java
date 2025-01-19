@@ -104,9 +104,6 @@ public class UserServiceImpl implements UserService {
                 user.setEnable(true);
                 userRepository.save(user);
                 confirmationRepository.delete(confirmation.get());
-                UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUserEmail());
-                UsernamePasswordAuthenticationToken upaToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(upaToken);
                 return jwtService.generateToken(user.getUserEmail());
             }
             throw new UserAlreadyExistsException("User is already verified.");
