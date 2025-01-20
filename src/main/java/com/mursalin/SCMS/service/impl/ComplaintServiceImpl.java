@@ -1,6 +1,7 @@
 package com.mursalin.SCMS.service.impl;
 
 import com.mursalin.SCMS.dto.ComplaintDTO;
+import com.mursalin.SCMS.dto.ImageResponse;
 import com.mursalin.SCMS.exceptionHandler.ComplaintNotFoundException;
 import com.mursalin.SCMS.exceptionHandler.InvalidComplaintStateException;
 import com.mursalin.SCMS.exceptionHandler.UnauthorizedActionException;
@@ -9,6 +10,7 @@ import com.mursalin.SCMS.model.Status;
 import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.service.ComplaintService;
+import com.mursalin.SCMS.service.ImageService;
 import com.mursalin.SCMS.utils.UserUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,21 +24,23 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     private final UserUtil userUtil;
     private final ComplaintRepository complaintRepository;
+    private final ImageService imageService;
 
-    public ComplaintServiceImpl(UserUtil userUtil, ComplaintRepository complaintRepository) {
+    public ComplaintServiceImpl(UserUtil userUtil, ComplaintRepository complaintRepository, ImageService imageService) {
         this.userUtil = userUtil;
         this.complaintRepository = complaintRepository;
+        this.imageService = imageService;
     }
 
     @Override
     public void addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
         try {
+            ImageResponse image = imageService.uploadImage(imageFile);
             User user = userUtil.getUserFromDB(userEmail);
             complaint.setCreatedAt(LocalDate.now());
             complaint.setStatus(String.valueOf(Status.PENDING));
-            complaint.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
-            complaint.setImageType(imageFile.getContentType());
-            complaint.setImageData(imageFile.getBytes());
+            complaint.setImageUrl(image.getImageUrl());
+            complaint.setDeleteHash(image.getData().getDeleteHash());
             complaint.setUser(user);
 
             complaintRepository.save(complaint);
@@ -54,9 +58,11 @@ public class ComplaintServiceImpl implements ComplaintService {
 
             if (complaint.getUser().getUserEmail().equals(userEmail)) {
 
-                if( complaint.getStatus().equals(String.valueOf(Status.PENDING))) {
+                if( complaint.getStatus().equalsIgnoreCase(String.valueOf(Status.PENDING))) {
 
+                    imageService.deleteImage(complaint.getDeleteHash());
                     complaintRepository.deleteById(complaintId);
+                    return;
                 }
                 throw new InvalidComplaintStateException("Can not delete complaint due to in progress or resolved state");
             }
@@ -80,13 +86,14 @@ public class ComplaintServiceImpl implements ComplaintService {
         }
 
         try {
+            imageService.deleteImage(complaintDB.getDeleteHash());
+            ImageResponse image = imageService.uploadImage(imageFile);
             complaintDB.setUpdatedAt(LocalDate.now());
             complaintDB.setCategory(complaint.getCategory());
             complaintDB.setDescription(complaint.getDescription());
             complaintDB.setTitle(complaint.getTitle());
-            complaintDB.setImageName(generateUniqueFilename(imageFile.getOriginalFilename()));
-            complaintDB.setImageType(imageFile.getContentType());
-            complaintDB.setImageData(imageFile.getBytes());
+            complaintDB.setImageUrl(image.getImageUrl());
+            complaintDB.setDeleteHash(image.getData().getDeleteHash());
             complaintRepository.save(complaintDB);
         } catch (IOException e) {
             throw new RuntimeException("Error while updating the complaint image");
@@ -97,11 +104,6 @@ public class ComplaintServiceImpl implements ComplaintService {
     public List<ComplaintDTO> getComplaints(String userEmail) {
         Long userId = userUtil.getUserFromDB(userEmail).getUserId();
         return complaintRepository.findComplaintsByUserId(userId);
-    }
-
-    private String generateUniqueFilename(String originalFilename) {
-        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        return System.currentTimeMillis() + "_" + originalFilename.hashCode() + extension;
     }
 
 }
