@@ -40,7 +40,7 @@ public class ComplaintServiceImpl implements ComplaintService {
             complaint.setCreatedAt(LocalDate.now());
             complaint.setStatus(String.valueOf(Status.PENDING));
             complaint.setImageUrl(image.getImageUrl());
-            complaint.setDeleteHash(image.getData().getDeleteHash());
+            complaint.setDeleteHash(image.getDeleteHash());
             complaint.setUser(user);
 
             complaintRepository.save(complaint);
@@ -93,7 +93,7 @@ public class ComplaintServiceImpl implements ComplaintService {
             complaintDB.setDescription(complaint.getDescription());
             complaintDB.setTitle(complaint.getTitle());
             complaintDB.setImageUrl(image.getImageUrl());
-            complaintDB.setDeleteHash(image.getData().getDeleteHash());
+            complaintDB.setDeleteHash(image.getDeleteHash());
             complaintRepository.save(complaintDB);
         } catch (IOException e) {
             throw new RuntimeException("Error while updating the complaint image");
