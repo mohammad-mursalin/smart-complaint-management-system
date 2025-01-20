@@ -34,6 +34,7 @@ public class AdminServiceImpl implements AdminService {
 
         Complaint complaint = complaintRepository.findById(complaintId).orElseThrow(() -> new ComplaintNotFoundException("Unavailable complaint with id : " + complaintId));
 
+        complaint.setStatus(status);
         return complaintRepository.save(complaint);
     }
 
