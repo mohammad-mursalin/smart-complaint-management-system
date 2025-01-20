@@ -1,5 +1,6 @@
 package com.mursalin.SCMS.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ComplaintDTO {
 
     private Long complaintId;
