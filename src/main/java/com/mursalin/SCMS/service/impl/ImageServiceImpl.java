@@ -16,10 +16,11 @@ import java.io.IOException;
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private static final String IMGUR_UPLOAD_URL = "https://api.imgur.com/3/image";
+    @Value("${imgur.upload.url}")
+    private String IMGUR_UPLOAD_URL;
 
     @Value("${imgur.client.id}")
-    private static String CLIENT_ID;
+    private String CLIENT_ID;
 
     @Override
     public ImageResponse uploadImage(MultipartFile imageFile) throws IOException {
@@ -30,6 +31,7 @@ public class ImageServiceImpl implements ImageService {
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("image", new ByteArrayResource(imageFile.getBytes()) {
+            @Override
             public String getFilename() {
                 return imageFile.getOriginalFilename();
             }
@@ -41,25 +43,31 @@ public class ImageServiceImpl implements ImageService {
 
         ResponseEntity<ImageResponse> response = restTemplate.postForEntity(IMGUR_UPLOAD_URL, requestEntity, ImageResponse.class);
 
-        if(response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+        HttpHeaders responseHeaders = response.getHeaders();
+        System.out.println("Client Remaining: " + responseHeaders.getFirst("X-RateLimit-ClientRemaining"));
+        System.out.println("User Remaining: " + responseHeaders.getFirst("X-RateLimit-UserRemaining"));
+        System.out.println("User Reset Time: " + responseHeaders.getFirst("X-RateLimit-UserReset"));
+
+        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
             throw new RuntimeException("Failed to upload image to Imgur");
         }
         return response.getBody();
     }
 
+    @Override
     public void deleteImage(String deleteHash) {
-        String deleteUrl = "https://api/imgur.com/3/image/" + deleteHash;
+        String deleteUrl = "https://api.imgur.com/3/image/" + deleteHash;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Client_ID" + CLIENT_ID);
+        headers.set("Authorization", "Client-ID " + CLIENT_ID); // Corrected `Client-ID` typo
 
         RestTemplate restTemplate = new RestTemplate();
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(deleteUrl,HttpMethod.DELETE, requestEntity, Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange(deleteUrl, HttpMethod.DELETE, requestEntity, Void.class);
 
-        if(!response.getStatusCode().is2xxSuccessful()) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("Failed to delete the image from Imgur");
         }
     }
