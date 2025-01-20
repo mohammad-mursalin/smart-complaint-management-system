@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -15,6 +12,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Builder
 public class Complaint {
 
     @Id
@@ -37,10 +35,8 @@ public class Complaint {
 
     private LocalDate updatedAt;
 
-    private String imageName;
-    private String imageType;
-    @Lob
-    private byte[] imageData;
+    private String imageUrl;
+    private String deleteHash;
 
     @JsonIgnore
     @ManyToOne

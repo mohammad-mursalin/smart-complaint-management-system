@@ -25,14 +25,11 @@ public class ComplaintDTO {
 
     private LocalDate updatedAt;
 
-    private String imageName;
-    private String imageType;
-
-    private byte[] imageData;
+    private String imageUrl;
 
     private UserDTO user;
 
-        public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageName, String imageType, byte[] imageData) {
+        public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageUrl) {
         this.complaintId = complaintId;
         this.title = title;
         this.description = description;
@@ -40,8 +37,6 @@ public class ComplaintDTO {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.imageName = imageName;
-        this.imageType = imageType;
-        this.imageData = imageData;
+        this.imageUrl = imageUrl;
     }
 }
