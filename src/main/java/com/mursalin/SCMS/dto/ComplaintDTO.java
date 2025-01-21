@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -31,7 +32,9 @@ public class ComplaintDTO {
 
     private UserDTO user;
 
-        public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageUrl) {
+    private List<CommentDTO> commentDTO;
+
+    public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageUrl) {
         this.complaintId = complaintId;
         this.title = title;
         this.description = description;
