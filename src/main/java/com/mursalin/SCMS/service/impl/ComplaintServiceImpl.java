@@ -1,5 +1,6 @@
 package com.mursalin.SCMS.service.impl;
 
+import com.mursalin.SCMS.dto.CommentDTO;
 import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.dto.ImageResponse;
 import com.mursalin.SCMS.exceptionHandler.ComplaintNotFoundException;
@@ -52,23 +53,16 @@ public class ComplaintServiceImpl implements ComplaintService {
     @Override
     public void deleteComplaint(String userEmail, Long complaintId) {
 
-        if (complaintRepository.existsById(complaintId)) {
+        Complaint complaint = complaintRepository.findComplaintByIdAndUserEmail(complaintId, userEmail)
+                .orElseThrow(() -> new ComplaintNotFoundException("Complaint not found"));
 
-            Complaint complaint = complaintRepository.findById(complaintId).get();
+        if( complaint.getStatus().equalsIgnoreCase(String.valueOf(Status.PENDING))) {
 
-            if (complaint.getUser().getUserEmail().equals(userEmail)) {
-
-                if( complaint.getStatus().equalsIgnoreCase(String.valueOf(Status.PENDING))) {
-
-                    imageService.deleteImage(complaint.getDeleteHash());
-                    complaintRepository.deleteById(complaintId);
-                    return;
-                }
-                throw new InvalidComplaintStateException("Can not delete complaint due to in progress or resolved state");
-            }
-            throw new UnauthorizedActionException("You are not authorized to delete this complaint");
+            imageService.deleteImage(complaint.getDeleteHash());
+            complaintRepository.deleteById(complaintId);
+            return;
         }
-        throw new ComplaintNotFoundException("Complaint with id " + complaintId + " not found");
+        throw new InvalidComplaintStateException("Can not delete complaint due to in progress or resolved state");
     }
 
 
