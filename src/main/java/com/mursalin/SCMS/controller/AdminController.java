@@ -1,5 +1,6 @@
 package com.mursalin.SCMS.controller;
 
+import com.mursalin.SCMS.dto.CommentDTO;
 import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.dto.UserDTO;
 import com.mursalin.SCMS.model.Complaint;
@@ -46,5 +47,17 @@ public class AdminController {
         if(users.isEmpty())
             return new ResponseEntity<>("No users found", HttpStatus.OK);
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @PostMapping("/addComment")
+    public ResponseEntity<?> addComment(@RequestPart CommentDTO comment, @PathVariable Long complaintId) {
+        adminService.addComment(comment, complaintId);
+        return new ResponseEntity<>("New comment added successfully", HttpStatus.CREATED);
+    }
+
+    @PutMapping("/updateComment/{complaintId}")
+    public ResponseEntity<?> updateComment(@RequestPart CommentDTO comment, @PathVariable Long complaintId) {
+        adminService.updateComment(comment, complaintId);
+        return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);
     }
 }
