@@ -46,6 +46,7 @@ public class Complaint {
     private User user;
 
     @OneToMany(mappedBy = "complaint", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt ASC")
     private List<Comment> comments = new ArrayList<>();
 
     public void setComments(Comment comment) {
