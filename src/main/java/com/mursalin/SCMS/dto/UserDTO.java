@@ -25,4 +25,19 @@ public class UserDTO {
         this.userEmail = userEmail;
         this.complaintDTOS = complaintDTOS;
     }
+
+    public UserDTO(Long userId, String userName, String userEmail) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+
+    }
+
+    public UserDTO(Long userId, String userName, String userEmail, String password, String role) {
+        this.userId = userId;
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.password = password;
+        this.role = role;
+    }
 }
