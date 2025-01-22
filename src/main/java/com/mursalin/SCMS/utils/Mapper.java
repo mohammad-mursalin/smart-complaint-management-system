@@ -2,7 +2,9 @@ package com.mursalin.SCMS.utils;
 
 import com.mursalin.SCMS.dto.CommentDTO;
 import com.mursalin.SCMS.dto.ComplaintDTO;
+import com.mursalin.SCMS.dto.UserDTO;
 import com.mursalin.SCMS.model.Complaint;
+import com.mursalin.SCMS.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,5 +32,13 @@ public class Mapper {
                 complaint.getImageUrl(),
                 commentDTOs
         );
+    }
+
+    public UserDTO mapToUserDTO(User user) {
+        return new UserDTO(
+                user.getUserId(),
+                user.getUserName(),
+                user.getUserEmail(),
+                user.getComplaints().stream().map(this::mapToComplaintDTO).collect(Collectors.toList()));
     }
 }
