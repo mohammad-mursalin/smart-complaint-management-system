@@ -2,6 +2,7 @@ package com.mursalin.SCMS.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
 public class ComplaintDTO {
 
     private Long complaintId;
@@ -34,7 +36,8 @@ public class ComplaintDTO {
 
     private List<CommentDTO> commentDTO;
 
-    public ComplaintDTO(Long complaintId, String title, String description, String category, String status, LocalDate createdAt, LocalDate updatedAt, String imageUrl) {
+    public ComplaintDTO(Long complaintId, String title, String description, String category, String status,
+                        LocalDate createdAt, LocalDate updatedAt, String imageUrl, List<CommentDTO> commentDTO) {
         this.complaintId = complaintId;
         this.title = title;
         this.description = description;
@@ -43,5 +46,7 @@ public class ComplaintDTO {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.imageUrl = imageUrl;
+        this.commentDTO = commentDTO;
     }
+
 }
