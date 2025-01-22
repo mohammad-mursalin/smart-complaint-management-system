@@ -28,7 +28,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     private final UserUtil userUtil;
     private final ComplaintRepository complaintRepository;
     private final ImageService imageService;
-    private Mapper mapper = new Mapper();
+    private final Mapper mapper = new Mapper();
 
     public ComplaintServiceImpl(UserUtil userUtil, ComplaintRepository complaintRepository, ImageService imageService) {
         this.userUtil = userUtil;
