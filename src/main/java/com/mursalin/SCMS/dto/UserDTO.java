@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,10 +17,12 @@ public class UserDTO {
     private String userEmail;
     private String password;
     private String role;
+    private List<ComplaintDTO> complaintDTOS;
 
-    public UserDTO(Long userId, String userName, String userEmail) {
+    public UserDTO(Long userId, String userName, String userEmail, List<ComplaintDTO> complaintDTOS) {
         this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
+        this.complaintDTOS = complaintDTOS;
     }
 }
