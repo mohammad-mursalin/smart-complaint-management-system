@@ -21,4 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT new com.mursalin.SCMS.dto.UserDTO(u.userId, u.userName, u.userEmail) FROM User u WHERE u.isEnable = true")
     List<UserDTO> findAllUsers();
+
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.complaints c LEFT JOIN FETCH c.comments WHERE c.status = :status")
+    List<User> findAllUsersWithComplaints(String status);
 }
