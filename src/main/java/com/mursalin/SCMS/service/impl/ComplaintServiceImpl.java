@@ -12,6 +12,7 @@ import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.service.ComplaintService;
 import com.mursalin.SCMS.service.ImageService;
+import com.mursalin.SCMS.utils.Mapper;
 import com.mursalin.SCMS.utils.UserUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     private final UserUtil userUtil;
     private final ComplaintRepository complaintRepository;
     private final ImageService imageService;
+    private Mapper mapper = new Mapper();
 
     public ComplaintServiceImpl(UserUtil userUtil, ComplaintRepository complaintRepository, ImageService imageService) {
         this.userUtil = userUtil;
@@ -100,30 +102,7 @@ public class ComplaintServiceImpl implements ComplaintService {
         Long userId = userUtil.getUserFromDB(userEmail).getUserId();
         List<Complaint> complaints = complaintRepository.findComplaintsByUserId(userId);
 
-        return complaints.stream().map(this::mapToComplaintDTO).collect(Collectors.toList());
-    }
-
-    private ComplaintDTO mapToComplaintDTO(Complaint complaint) {
-        List<CommentDTO> commentDTOs = complaint.getComments().stream()
-                .map(comment -> new CommentDTO(
-                        comment.getCommentId(),
-                        comment.getComment(),
-                        comment.getCreatedAt(),
-                        comment.getEditedAt(),
-                        comment.getCommentedBy()))
-                .collect(Collectors.toList());
-
-        return new ComplaintDTO(
-                complaint.getComplaintId(),
-                complaint.getTitle(),
-                complaint.getDescription(),
-                complaint.getCategory(),
-                complaint.getStatus(),
-                complaint.getCreatedAt(),
-                complaint.getUpdatedAt(),
-                complaint.getImageUrl(),
-                commentDTOs
-        );
+        return complaints.stream().map(mapper::mapToComplaintDTO).collect(Collectors.toList());
     }
 
 }
