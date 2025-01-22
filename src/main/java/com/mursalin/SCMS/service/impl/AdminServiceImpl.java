@@ -13,6 +13,7 @@ import com.mursalin.SCMS.repository.CommentRepository;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.repository.UserRepository;
 import com.mursalin.SCMS.service.AdminService;
+import com.mursalin.SCMS.utils.Mapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -27,6 +29,7 @@ public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final ComplaintRepository complaintRepository;
     private final CommentRepository commentRepository;
+    private final Mapper mapper = new Mapper();
 
     public AdminServiceImpl(UserRepository userRepository, ComplaintRepository complaintRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
@@ -36,9 +39,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<ComplaintDTO> getComplaints() {
+    public List<UserDTO> getComplaints(String status) {
 
-        return complaintRepository.findAllComplaintsWithUser();
+        List<User> users = userRepository.findAllUsersWithComplaints(status);
+
+        return users.stream().map(mapper::mapToUserDTO).collect(Collectors.toList());
     }
 
     @Override
