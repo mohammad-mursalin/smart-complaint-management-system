@@ -27,12 +27,12 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping()
-    public ResponseEntity<?> getComplaints() {
-        List<ComplaintDTO> complaints = adminService.getComplaints();
-        if(complaints.isEmpty())
+    @GetMapping("/{status}")
+    public ResponseEntity<?> getComplaints(@PathVariable String status) {
+        List<UserDTO> userDTOSs = adminService.getComplaints(status);
+        if(userDTOSs.isEmpty())
             return new ResponseEntity<>("No complaints submitted till now", HttpStatus.OK);
-        return new ResponseEntity<>(complaints, HttpStatus.OK);
+        return new ResponseEntity<>(userDTOSs, HttpStatus.OK);
     }
 
     @PostMapping("/updateStatus/{complaintId}/{status}")
