@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ComplaintServiceImpl implements ComplaintService {
@@ -97,7 +98,32 @@ public class ComplaintServiceImpl implements ComplaintService {
     @Override
     public List<ComplaintDTO> getComplaints(String userEmail) {
         Long userId = userUtil.getUserFromDB(userEmail).getUserId();
-        return complaintRepository.findComplaintsByUserId(userId);
+        List<Complaint> complaints = complaintRepository.findComplaintsByUserId(userId);
+
+        return complaints.stream().map(this::mapToComplaintDTO).collect(Collectors.toList());
+    }
+
+    private ComplaintDTO mapToComplaintDTO(Complaint complaint) {
+        List<CommentDTO> commentDTOs = complaint.getComments().stream()
+                .map(comment -> new CommentDTO(
+                        comment.getCommentId(),
+                        comment.getComment(),
+                        comment.getCreatedAt(),
+                        comment.getEditedAt(),
+                        comment.getCommentedBy()))
+                .collect(Collectors.toList());
+
+        return new ComplaintDTO(
+                complaint.getComplaintId(),
+                complaint.getTitle(),
+                complaint.getDescription(),
+                complaint.getCategory(),
+                complaint.getStatus(),
+                complaint.getCreatedAt(),
+                complaint.getUpdatedAt(),
+                complaint.getImageUrl(),
+                commentDTOs
+        );
     }
 
 }
