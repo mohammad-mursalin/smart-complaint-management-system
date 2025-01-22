@@ -12,10 +12,12 @@ import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.service.CommentService;
 import com.mursalin.SCMS.utils.UserUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+@Service
 public class CommentServiceImpl implements CommentService {
 
     private final UserUtil userUtil;
