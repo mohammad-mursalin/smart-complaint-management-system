@@ -12,11 +12,8 @@ import java.util.Optional;
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
-    @Query("SELECT new com.mursalin.SCMS.dto.ComplaintDTO(c.complaintId, c.title, c.description, c.category, c.status, " +
-            "c.createdAt, c.updatedAt, c.imageUrl, " +
-            "new com.mursalin.SCMS.dto.CommentDTO(cm.commentId, cm.comment, cm.createdAt, cm.editedAt, cm.commentedBy)) " +
-            "FROM Complaint c LEFT JOIN FETCH c.comments cm WHERE c.user.userId = :userId")
-    List<ComplaintDTO> findComplaintsByUserId(Long userId);
+    @Query("SELECT c FROM Complaint c LEFT JOIN FETCH c.comments cm WHERE c.user.userId = :userId")
+    List<Complaint> findComplaintsByUserId(Long userId);
 
     @Query("SELECT c FROM Complaint c WHERE c.complaintId = :complaintId AND c.user.userEmail = :userEmail")
     Optional<Complaint> findComplaintByIdAndUserEmail(Long complaintId, String userEmail);
