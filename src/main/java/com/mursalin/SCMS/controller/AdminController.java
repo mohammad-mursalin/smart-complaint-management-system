@@ -29,10 +29,10 @@ public class AdminController {
 
     @GetMapping("/{status}")
     public ResponseEntity<?> getComplaints(@PathVariable String status) {
-        List<UserDTO> userDTOSs = adminService.getComplaints(status);
-        if(userDTOSs.isEmpty())
+        List<ComplaintDTO> complaintDTOS = adminService.getComplaints(status);
+        if(complaintDTOS.isEmpty())
             return new ResponseEntity<>("No complaints submitted till now", HttpStatus.OK);
-        return new ResponseEntity<>(userDTOSs, HttpStatus.OK);
+        return new ResponseEntity<>(complaintDTOS, HttpStatus.OK);
     }
 
     @PostMapping("/updateStatus/{complaintId}/{status}")
@@ -49,14 +49,14 @@ public class AdminController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/addComment")
-    public ResponseEntity<?> addComment(@RequestPart CommentDTO comment, @PathVariable Long complaintId) {
+    @PostMapping("/addComment/{complaintId}")
+    public ResponseEntity<?> addComment(@RequestBody CommentDTO comment, @PathVariable Long complaintId) {
         adminService.addComment(comment, complaintId);
         return new ResponseEntity<>("New comment added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/updateComment/{complaintId}")
-    public ResponseEntity<?> updateComment(@RequestPart CommentDTO comment, @PathVariable Long complaintId) {
+    public ResponseEntity<?> updateComment(@RequestBody CommentDTO comment, @PathVariable Long complaintId) {
         adminService.updateComment(comment, complaintId);
         return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);
     }

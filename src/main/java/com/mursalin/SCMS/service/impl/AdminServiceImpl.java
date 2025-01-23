@@ -5,10 +5,8 @@ import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.dto.UserDTO;
 import com.mursalin.SCMS.exceptionHandler.ComplaintNotFoundException;
 import com.mursalin.SCMS.exceptionHandler.CustomException;
-import com.mursalin.SCMS.exceptionHandler.UnauthorizedActionException;
 import com.mursalin.SCMS.model.Comment;
 import com.mursalin.SCMS.model.Complaint;
-import com.mursalin.SCMS.model.User;
 import com.mursalin.SCMS.repository.CommentRepository;
 import com.mursalin.SCMS.repository.ComplaintRepository;
 import com.mursalin.SCMS.repository.UserRepository;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,11 +36,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<UserDTO> getComplaints(String status) {
+    @Transactional
+    public List<ComplaintDTO> getComplaints(String status) {
 
-        List<User> users = userRepository.findAllUsersWithComplaints(status);
+        List<Complaint> complaints = complaintRepository.findAllComplaintsWithComments(status);
 
-        return users.stream().map(mapper::mapToUserDTO).collect(Collectors.toList());
+        return complaints.stream().map(mapper::mapToComplaintDTO).collect(Collectors.toList());
     }
 
     @Override

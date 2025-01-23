@@ -8,7 +8,7 @@ import com.mursalin.SCMS.model.Complaint;
 import java.util.List;
 
 public interface AdminService {
-    List<UserDTO> getComplaints(String status);
+    List<ComplaintDTO> getComplaints(String status);
 
     Complaint updateStatus(Long complaintId, String status);
 
