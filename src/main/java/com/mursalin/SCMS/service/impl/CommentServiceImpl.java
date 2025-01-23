@@ -32,14 +32,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void addComment(String userEmail, CommentDTO commentDto, Long complaintId) {
+    public void addComment(String userEmail, CommentDTO commentDTO, Long complaintId) {
         User user = userUtil.getUserFromDB(userEmail);
         Complaint complaint = complaintRepository.findComplaintByIdAndUserEmail(complaintId, userEmail)
                 .orElseThrow(() -> new ComplaintNotFoundException("Complaint not found"));
 
         Comment comment = Comment.builder()
                 .createdAt(LocalDateTime.now())
-                .comment(commentDto.getComment())
+                .comment(commentDTO.getComment())
                 .commentedBy(user.getUserName())
                 .complaint(complaint)
                 .build();

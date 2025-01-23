@@ -5,10 +5,7 @@ import com.mursalin.SCMS.dto.ComplaintDTO;
 import com.mursalin.SCMS.model.Complaint;
 import com.mursalin.SCMS.service.CommentService;
 import com.mursalin.SCMS.service.ComplaintService;
-import com.mursalin.SCMS.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -61,15 +58,15 @@ public class ComplaintController {
         return new ResponseEntity<>("Complaint deleted successfully", HttpStatus.OK);
     }
 
-    @PostMapping("/addComment")
-    public ResponseEntity<?> addComment(@AuthenticationPrincipal UserDetails userDetails, @RequestPart CommentDTO comment, @PathVariable Long complaintId) {
+    @PostMapping("/addComment/{complaintId}")
+    public ResponseEntity<?> addComment(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CommentDTO commentDto, @PathVariable Long complaintId) {
         String userEmail = userDetails.getUsername();
-        commentService.addComment(userEmail, comment, complaintId);
+        commentService.addComment(userEmail, commentDto, complaintId);
         return new ResponseEntity<>("New comment added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/updateComment/{complaintId}")
-    public ResponseEntity<?> updateComment(@AuthenticationPrincipal UserDetails userDetails, @RequestPart CommentDTO comment, @PathVariable Long complaintId) {
+    public ResponseEntity<?> updateComment(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CommentDTO comment, @PathVariable Long complaintId) {
         String userEmail = userDetails.getUsername();
         commentService.updateComment(userEmail, comment, complaintId);
         return new ResponseEntity<>("Comment updated successfully", HttpStatus.OK);
