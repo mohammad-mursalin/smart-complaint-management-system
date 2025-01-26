@@ -29,7 +29,7 @@ public class ComplaintController {
     }
 
     @PostMapping("/addComplaint")
-    public ResponseEntity<?> addComplaint(@RequestPart Complaint complaint, @RequestPart MultipartFile imageFile, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> addComplaint(@RequestPart Complaint complaint, @RequestPart(required = false) MultipartFile imageFile, @AuthenticationPrincipal UserDetails userDetails) {
         String userEmail = userDetails.getUsername();
         complaintService.addComplaint(userEmail, complaint, imageFile);
         return new ResponseEntity<>("New complaint added successfully", HttpStatus.CREATED);
@@ -45,7 +45,7 @@ public class ComplaintController {
     }
 
     @PutMapping("/updateComplaint")
-    public ResponseEntity<?> updateComplaints(@AuthenticationPrincipal UserDetails userDetails, @RequestPart Complaint complaint, @RequestPart MultipartFile imageFile) {
+    public ResponseEntity<?> updateComplaints(@AuthenticationPrincipal UserDetails userDetails, @RequestPart Complaint complaint, @RequestPart(required = false) MultipartFile imageFile) {
         String userEmail = userDetails.getUsername();
         complaintService.updateComplaint(userEmail, complaint, imageFile);
         return new ResponseEntity<>("Complaint updated successfully", HttpStatus.OK);

@@ -39,12 +39,14 @@ public class ComplaintServiceImpl implements ComplaintService {
     @Override
     public void addComplaint(String userEmail, Complaint complaint, MultipartFile imageFile) {
         try {
-            ImageResponse image = imageService.uploadImage(imageFile);
             User user = userUtil.getUserFromDB(userEmail);
             complaint.setCreatedAt(LocalDate.now());
             complaint.setStatus(String.valueOf(Status.PENDING));
-            complaint.setImageUrl(image.getImageUrl());
-            complaint.setDeleteHash(image.getDeleteHash());
+            if (imageFile != null && !imageFile.isEmpty()) {
+                ImageResponse image = imageService.uploadImage(imageFile);
+                complaint.setImageUrl(image.getImageUrl());
+                complaint.setDeleteHash(image.getDeleteHash());
+            }
             complaint.setUser(user);
 
             complaintRepository.save(complaint);
@@ -83,14 +85,16 @@ public class ComplaintServiceImpl implements ComplaintService {
         }
 
         try {
-            imageService.deleteImage(complaintDB.getDeleteHash());
-            ImageResponse image = imageService.uploadImage(imageFile);
             complaintDB.setUpdatedAt(LocalDate.now());
             complaintDB.setCategory(complaint.getCategory());
             complaintDB.setDescription(complaint.getDescription());
             complaintDB.setTitle(complaint.getTitle());
-            complaintDB.setImageUrl(image.getImageUrl());
-            complaintDB.setDeleteHash(image.getDeleteHash());
+            if (imageFile != null && !imageFile.isEmpty()) {
+                imageService.deleteImage(complaintDB.getDeleteHash());
+                ImageResponse image = imageService.uploadImage(imageFile);
+                complaintDB.setImageUrl(image.getImageUrl());
+                complaintDB.setDeleteHash(image.getDeleteHash());
+            }
             complaintRepository.save(complaintDB);
         } catch (IOException e) {
             throw new RuntimeException("Error while updating the complaint image");
