@@ -57,14 +57,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) {
         if(!userRepository.existsByUserEmailIgnoreCase(user.getUserEmail())) {
-            user.setRole(String.valueOf(Role.USER));
-            user.setEnable(false);
-            user.setPassword(encoder.encode(user.getPassword()));
-            Confirmation confirmation = new Confirmation(user);
-            userRepository.save(user);
-            confirmationRepository.save(confirmation);
-            mailService.sendSimpleMail(user.getUserName(), user.getUserEmail(),confirmation.getToken());
-            return user;
+            if(!userRepository.existsById(user.getUserId())) {
+                user.setRole(String.valueOf(Role.USER));
+                user.setEnable(false);
+                user.setPassword(encoder.encode(user.getPassword()));
+                Confirmation confirmation = new Confirmation(user);
+                userRepository.save(user);
+                confirmationRepository.save(confirmation);
+                mailService.sendSimpleMail(user.getUserName(), user.getUserEmail(),confirmation.getToken());
+                return user;
+            }
+            throw new CustomException("User already exists with this id : " + user.getUserId(),HttpStatus.CONFLICT);
         }
         throw new CustomException("User already exists with this email : " + user.getUserEmail(),HttpStatus.CONFLICT);
     }
