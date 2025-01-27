@@ -18,7 +18,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     @Query("SELECT c FROM Complaint c WHERE c.complaintId = :complaintId AND c.user.userEmail = :userEmail")
     Optional<Complaint> findComplaintByIdAndUserEmail(Long complaintId, String userEmail);
 
-    @Query("SELECT DISTINCT c FROM Complaint c LEFT JOIN FETCH c.comments WHERE c.status = :status")
+    @Query("SELECT DISTINCT c FROM Complaint c LEFT JOIN FETCH c.comments WHERE (:status IS NULL OR c.status = :status)")
     List<Complaint> findAllComplaintsWithComments(String status);
 
 }
