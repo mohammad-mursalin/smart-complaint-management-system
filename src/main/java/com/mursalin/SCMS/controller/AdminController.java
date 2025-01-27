@@ -27,8 +27,8 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("/{status}")
-    public ResponseEntity<?> getComplaints(@PathVariable String status) {
+    @GetMapping
+    public ResponseEntity<?> getComplaints(@RequestParam (required = false) String status) {
         List<ComplaintDTO> complaintDTOS = adminService.getComplaints(status);
         if(complaintDTOS.isEmpty())
             return new ResponseEntity<>("No complaints found with status: " + status, HttpStatus.OK);
