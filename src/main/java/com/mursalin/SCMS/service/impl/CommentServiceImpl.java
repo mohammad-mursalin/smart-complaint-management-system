@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = Comment.builder()
                 .createdAt(LocalDateTime.now())
                 .comment(commentDTO.getComment())
-                .commentedBy(user.getUserName())
+                .commentedBy("AUTHOR")
                 .complaint(complaint)
                 .build();
 
