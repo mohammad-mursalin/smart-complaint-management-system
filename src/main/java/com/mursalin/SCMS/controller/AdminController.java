@@ -36,7 +36,8 @@ public class AdminController {
         return new ResponseEntity<>(complaintDTOS, HttpStatus.OK);
     }
 
-    @PostMapping("/updateStatus/{complaintId}/{status}")
+
+    @PutMapping("/updateStatus/{complaintId}/{status}")
     public ResponseEntity<?> updateStatus(@PathVariable Long complaintId, @PathVariable String status) {
         Complaint complaint = adminService.updateStatus(complaintId, status);
         return new ResponseEntity<>(complaint, HttpStatus.OK);
