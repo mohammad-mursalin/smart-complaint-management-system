@@ -31,7 +31,7 @@ public class AdminController {
     public ResponseEntity<?> getComplaints(@PathVariable String status) {
         List<ComplaintDTO> complaintDTOS = adminService.getComplaints(status);
         if(complaintDTOS.isEmpty())
-            return new ResponseEntity<>("No complaints submitted till now", HttpStatus.OK);
+            return new ResponseEntity<>("No complaints found with status: " + status, HttpStatus.OK);
         return new ResponseEntity<>(complaintDTOS, HttpStatus.OK);
     }
 
